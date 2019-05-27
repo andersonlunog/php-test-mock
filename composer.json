@@ -1,0 +1,17 @@
+{
+    "name": "php-test-mock",
+    "description": "Projeto simples para criação de mocks de classes em PHP.",
+    "authors": [
+        {
+            "name": "Anderson Nogueira"
+        }
+    ],
+    "require": {
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.1"
+    },
+    "autoload": {
+        "classmap": ["src/"]
+    }
+}

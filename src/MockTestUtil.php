@@ -1,6 +1,6 @@
 <?php
 
-namespace AuthorizationTest\TestUtil;
+namespace TestMock;
 
 /**
  * Essa trait é composta de um conjunto de funcionalidades úteis para realização de testes por meio de mocks. 

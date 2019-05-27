@@ -1,6 +1,6 @@
 <?php
 
-namespace AuthorizationTest\TestUtil;
+namespace TestMock;
 
 /**
  * Classe responsável por validar as chamadas de um método.

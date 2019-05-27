@@ -1,6 +1,6 @@
 <?php
 
-namespace AuthorizationTest\TestUtil;
+namespace TestMock;
 
 /**
  * Essa classe mixa a MockSpyTestUtil e é utilizada para criar um objeto de spy dinâmico.

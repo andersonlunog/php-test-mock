@@ -1,6 +1,6 @@
 <?php
 
-namespace AuthorizationTest\TestUtil;
+namespace TestMock;
 
 class TestUtil {
     
