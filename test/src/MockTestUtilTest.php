@@ -16,7 +16,7 @@ class Foo {
     }
 }
 
-class MockTest extends \PHPUnit\Framework\TestCase {
+class MockTestUtilTest extends \PHPUnit\Framework\TestCase {
 
     public function testTestMock() {
         $fooMock = new class() extends Foo {
