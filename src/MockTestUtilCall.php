@@ -3,11 +3,11 @@
 namespace TestMock;
 
 /**
- * Classe responsável por validar os argumentos de uma chamada de um método.
+ * Classe responsável por validar os argumentos e retorno de uma chamada de um método.
  * 
  * @author Anderson Nogueira
  */
-class MockTestUtilCallArgs extends \PHPUnit\Framework\TestCase {
+class MockTestUtilCall extends \PHPUnit\Framework\TestCase {
 
     protected $_call;
     protected $_method;
@@ -28,7 +28,7 @@ class MockTestUtilCallArgs extends \PHPUnit\Framework\TestCase {
      * @return $this
      */
     public function withoutArgs() {
-        $this->assertEmpty($this->_call, "$this->_prefix is not empty.");
+        $this->assertEmpty($this->_call["arguments"], "$this->_prefix is not empty.");
         return $this;
     }
     
@@ -41,7 +41,7 @@ class MockTestUtilCallArgs extends \PHPUnit\Framework\TestCase {
     public function withArgs($args) {
         $this->withArgsCount(sizeof($args));
         foreach ($args as $i => $arg) {
-            $this->assertEquals($arg, $this->_call[$i], "$this->_prefix argument `$i`.");
+            $this->assertEquals($arg, $this->_call["arguments"][$i], "$this->_prefix argument `$i`.");
         }
         return $this;
     }
@@ -53,18 +53,18 @@ class MockTestUtilCallArgs extends \PHPUnit\Framework\TestCase {
      * @return $this
      */
     public function withArgsCount(int $count) {
-        $this->assertCount($count, $this->_call, "$this->_prefix args count.");
+        $this->assertCount($count, $this->getArgs(), "$this->_prefix args count.");
         return $this;
     }
 
     /**
      * Verifica se o método foi chamado com o argumento na posição informados.
      * 
-     * @param \AuthorizationTest\TestUtil\Int $argIndex
+     * @param int $argIndex
      * @param type $arg
      * @return $this
      */
-    public function withArg(Int $argIndex, $arg) {
+    public function withArg(int $argIndex, $arg) {
         $this->assertEquals($arg, $this->getArg($argIndex), "$this->_prefix argument `$argIndex`.");
         return $this;
     }
@@ -72,11 +72,34 @@ class MockTestUtilCallArgs extends \PHPUnit\Framework\TestCase {
     /**
      * Obtém o argumento pelo índice.
      * 
-     * @param \AuthorizationTest\TestUtil\Int $index
+     * @param int $index
      * @return type
      */
-    public function getArg(Int $index) {
-        return $this->_call[$index];
+    public function getArg(int $index) {
+        return $this->getArgs()[$index];
+    }
+    
+    /**
+     * Obtém o retorno do método invocado
+     */
+    public function getReturn() {
+        return $this->_call["return"];
+    }
+
+    /**
+     * Verifica o retorno do método chamado
+     */
+    public function withReturn($return) {
+        $this->assertEquals($return, $this->getReturn(), "$this->_prefix return not correspondent.");
+        return $this;
+    }
+
+    /**
+     * Verifica se o retorno do método chamado é nulo
+     */
+    public function withoutReturn() {
+        $this->assertEmpty($this->getReturn(), "$this->_prefix return not empty.");
+        return $this;
     }
     
     /**
@@ -85,7 +108,7 @@ class MockTestUtilCallArgs extends \PHPUnit\Framework\TestCase {
      * @return type
      */
     public function getArgs() {
-        return $this->_call;
+        return $this->_call["arguments"];
     }
 
 }

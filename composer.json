@@ -15,6 +15,14 @@
         "phpunit/phpunit": "^8.1"
     },
     "autoload": {
-        "classmap": ["src/"]
+        "psr-4": {
+            "TestMock\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TestMockTest\\": "test/"
+        }
     }
+
 }

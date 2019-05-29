@@ -22,35 +22,43 @@ trait MockTestUtil {
      * @return type
      */
     protected function mockMethod($method, $args) {
-        $this->addMockCall($method, $args);
+        $ret;
         if (!array_key_exists($method, $this->_mockReturns)) {
-            $method = array(get_parent_class($this), $method);
-            return call_user_func_array($method, $args);            
+            $methodOrig = array(get_parent_class($this), $method);
+            $ret = call_user_func_array($methodOrig, $args);            
+        } else {
+            $ret = $this->_mockReturns[$method];
         }
-        return $this->_mockReturns[$method];
+        $this->addMockCall($method, $args, $ret);
+        return $ret;
     }
 
     /**
-     * Método que guarda as chamadas ao método e seus parâmetros.
+     * Método que guarda as chamadas ao método, seus parâmetros e retorno.
      * 
      * @param type $method
      * @param type $args
+     * @param type $return
      */
-    protected function addMockCall($method, $args) {
+    protected function addMockCall($method, $args, $return) {
         if (!isset($this->_callsSpy[$method])) {
             $this->_callsSpy[$method] = [];
         }
-        array_push($this->_callsSpy[$method], $args);
+        $call = [
+            "return" => $return,
+            "arguments" => $args
+        ];
+        array_push($this->_callsSpy[$method], $call);
     }
 
     /**
      * Substitui o retorno de um método da classe.
      * 
-     * @param \AuthorizationTest\TestUtil\String $method
+     * @param string $method
      * @param type $return
      * @throws Exception
      */
-    public function setMockReturn(String $method, $return) {
+    public function setMockReturn(string $method, $return) {
         // if (!in_array($method, get_class_methods($this))) {
         //     throw new Exception("Method $method not found.");
         // }
@@ -60,9 +68,9 @@ trait MockTestUtil {
     /**
      * Cancela a substituição do retorno de um método da classe, voltando ao seu comportamento original.
      * 
-     * @param \AuthorizationTest\TestUtil\String $method
+     * @param string $method
      */
-    public function resetMethod(String $method) {
+    public function resetMethod(string $method) {
         unset($this->_mockReturns[$method]);
         unset($this->_callsSpy[$method]);
     }
@@ -87,10 +95,10 @@ trait MockTestUtil {
      *  $mock->assertCalls("metodoXPTO")->notCalled();
      * 
      * 
-     * @param \AuthorizationTest\TestUtil\String $method
-     * @return \AuthorizationTest\TestUtil\MockTestUtilCalls
+     * @param string $method
+     * @return \TestMock\MockTestUtilCalls
      */
-    public function assertCalls(String $method) {
+    public function assertCalls(string $method) {
         if (!isset($this->_callsSpy[$method])) {
             $this->_callsSpy[$method] = [];
         }

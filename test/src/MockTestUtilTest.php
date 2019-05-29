@@ -1,6 +1,8 @@
 <?php
 
-namespace TestMock;
+namespace TestMockTest;
+
+use TestMock\MockTestUtil;
 
 class Foo {
     protected function baz() {
@@ -8,7 +10,7 @@ class Foo {
     }
 
     public function bar() {
-        return $this->baz();
+        return 'BAR.' . $this->baz();
     }
 
     public function qux($param1, $param2) {
@@ -26,6 +28,10 @@ class Foo1 {
         $this->_bar = $bar;
     }
 
+    public static function myStatic() {
+        return 'Static called';
+    }
+
     protected function baz() {
         return $this->_baz;
     }
@@ -37,9 +43,9 @@ class Foo1 {
     public function qux(string $param1, int $param2) {
         return "QUX: $param1 AND $param2";
     }
-
-    public static function teste() {
-        return "xxx";
+    
+    public function withoutReturn() {
+        $this->bar();
     }
 }
 
@@ -60,32 +66,32 @@ class MockTestUtilTest extends \PHPUnit\Framework\TestCase {
             }
         };
 
-        $this->assertEquals('BAZ!', $fooMock->bar());
+        $this->assertEquals('BAR.BAZ!', $fooMock->bar());
         $this->assertEquals('QUX: p1 AND p2', $fooMock->qux('p1', 'p2'));
-        $fooMock->assertCalls('bar')->calledOnce()->withoutArgs();
-        $fooMock->assertCalls('baz')->calledOnce()->withoutArgs();
-        $fooMock->assertCalls('qux')->calledOnce()->withArgs(['p1', 'p2']);
+        $fooMock->assertCalls('bar')->calledOnce()->withoutArgs()->withReturn('BAR.BAZ!');
+        $fooMock->assertCalls('baz')->calledOnce()->withoutArgs()->withReturn('BAZ!');
+        $fooMock->assertCalls('qux')->calledOnce()->withArgs(['p1', 'p2'])->withReturn('QUX: p1 AND p2');
 
         $fooMock->setMockReturn('baz', 'MODIFIED!');
-        $this->assertEquals('MODIFIED!', $fooMock->bar());
+        $this->assertEquals('BAR.MODIFIED!', $fooMock->bar());
         $this->assertEquals(2, $fooMock->assertCalls('bar')->callCount());
-        $fooMock->assertCalls('baz')->getCall(1)->withoutArgs();
+        $fooMock->assertCalls('baz')->getCall(1)->withoutArgs()->withReturn('MODIFIED!');
     }
 
     public function testTestMockReflexao() {
         $mockName = MockTestUtil::createMock(Foo::class);
         $fooMock = new $mockName;
 
-        $this->assertEquals('BAZ!', $fooMock->bar());
+        $this->assertEquals('BAR.BAZ!', $fooMock->bar());
         $this->assertEquals('QUX: p1 AND p2', $fooMock->qux('p1', 'p2'));
-        $fooMock->assertCalls('bar')->calledOnce()->withoutArgs();
-        $fooMock->assertCalls('baz')->calledOnce()->withoutArgs();
-        $fooMock->assertCalls('qux')->calledOnce()->withArgs(['p1', 'p2']);
+        $fooMock->assertCalls('bar')->calledOnce()->withoutArgs()->withReturn('BAR.BAZ!');
+        $fooMock->assertCalls('baz')->calledOnce()->withoutArgs()->withReturn('BAZ!');
+        $fooMock->assertCalls('qux')->calledOnce()->withArgs(['p1', 'p2'])->withReturn('QUX: p1 AND p2');
 
         $fooMock->setMockReturn('baz', 'MODIFIED!');
-        $this->assertEquals('MODIFIED!', $fooMock->bar());
+        $this->assertEquals('BAR.MODIFIED!', $fooMock->bar());
         $this->assertEquals(2, $fooMock->assertCalls('bar')->callCount());
-        $fooMock->assertCalls('baz')->getCall(1)->withoutArgs();
+        $fooMock->assertCalls('baz')->getCall(1)->withoutArgs()->withReturn('MODIFIED!');
     }
 
     public function testTestMockParametroConstrutor() {
@@ -105,5 +111,8 @@ class MockTestUtilTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals('123MODIFIED!', $fooSpy->bar());
         $fooSpy->assertCalls('baz')->getCall(1)->withoutArgs();
         $fooSpy->assertCalls('qux')->getCall(1)->withArgs(["xpto", 232]);
+
+        $fooSpy->withoutReturn();
+        $fooSpy->assertCalls('withoutReturn')->calledOnce()->withoutReturn();
     }
 }

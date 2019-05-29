@@ -20,10 +20,10 @@ class MockTestUtilCalls extends \PHPUnit\Framework\TestCase {
     /**
      * Verifica a quantidade de chamadas ao método.
      * 
-     * @param \AuthorizationTest\TestUtil\Int $count
+     * @param int $count
      * @return $this
      */
-    public function withCount(Int $count) {
+    public function withCount(int $count) {
         $this->assertCount($count, $this->_calls, "Method $this->_method calls count.");
         return $this;
     }
@@ -32,17 +32,17 @@ class MockTestUtilCalls extends \PHPUnit\Framework\TestCase {
      * Obtém os argumentos da chamada número x, utilizando um design fluente. Ex.:
      *  ...->getCall(0)->withoutArgs();
      * 
-     * @param \AuthorizationTest\TestUtil\Int $callIndex
-     * @return \AuthorizationTest\TestUtil\MockTestUtilCallArgs
+     * @param int $callIndex
+     * @return \TestMock\MockTestUtilCall
      */
-    public function getCall(Int $callIndex) {
-        return new MockTestUtilCallArgs($this->_method, $callIndex, $this->_calls[$callIndex]);
+    public function getCall(int $callIndex) {
+        return new MockTestUtilCall($this->_method, $callIndex, $this->_calls[$callIndex]);
     }
 
     /**
      * Verifica se o método foi chamado apenas uma vez e retorna os argumentos da chamada.
      * 
-     * @return \AuthorizationTest\TestUtil\MockTestUtilCallArgs
+     * @return \TestMock\MockTestUtilCall
      */
     public function calledOnce() {
         return $this->withCount(1)->getCall(0);
@@ -51,7 +51,7 @@ class MockTestUtilCalls extends \PHPUnit\Framework\TestCase {
     /**
      * Verifica se o método não foi chamado.
      * 
-     * @return \AuthorizationTest\TestUtil\MockTestUtilCallArgs
+     * @return \TestMock\MockTestUtilCalls
      */
     public function notCalled() {
         return $this->withCount(0);
