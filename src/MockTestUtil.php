@@ -97,4 +97,33 @@ trait MockTestUtil {
         return new MockTestUtilCalls($method, $this->_callsSpy[$method]);
     }
 
+    /**
+     * Cria uma classe mock que mixa MockTestUtil por reflexão.
+     */
+    public static function createMock($className) {
+        $reflection = new \ReflectionClass($className);
+        $classMockName = '___' . $reflection->getShortName() . 'Mock';
+        $classStr = 'class ' . $classMockName . ' extends \\' . $className . " {\n";
+        $classStr .= "    use \\" . MockTestUtil::class . "; \n";
+        foreach ($reflection->getMethods() as $reflectionMethod) {
+            if (!$reflectionMethod->isStatic()) {
+                $methStr = MockTestUtil::getStringOfMethod($reflectionMethod);
+                $classStr .= preg_replace('/{.*}/s', '{ return $this->mockMethod(__FUNCTION__, func_get_args()); }', $methStr) . "\n";
+            }
+        }
+        $classStr .= "}";
+        eval($classStr);
+        return $classMockName;
+    }
+
+    private static function getStringOfMethod(\ReflectionMethod $reflectionMethod) {
+        $filename = $reflectionMethod->getFileName();
+        $start_line = $reflectionMethod->getStartLine() - 1;
+        $end_line = $reflectionMethod->getEndLine();
+        $length = $end_line - $start_line;
+        $source = file($filename);
+        $body = implode("", array_slice($source, $start_line, $length));
+        return $body;
+    }
+
 }
