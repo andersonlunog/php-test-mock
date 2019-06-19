@@ -94,8 +94,7 @@ class MockTestUtilTest extends \PHPUnit\Framework\TestCase {
         $fooMock->assertCalls('baz')->getCall(1)->withoutArgs()->withReturn('MODIFIED!');
     }
 
-    public function testTestMockParametroConstrutor() {
-        
+    public function testTestMockReflexaoParametroConstrutor() {
         $classMockName = MockTestUtil::createMock(Foo1::class);
         $fooSpy = new $classMockName('BAZ!', 123);
         
@@ -114,5 +113,15 @@ class MockTestUtilTest extends \PHPUnit\Framework\TestCase {
 
         $fooSpy->withoutReturn();
         $fooSpy->assertCalls('withoutReturn')->calledOnce()->withoutReturn();
+    }
+
+    public function testTestMockReflexaoDuasCriacoes() {
+        $classMockName = MockTestUtil::createMock(Foo1::class);
+        $fooSpy = new $classMockName('BAZ!', 123);
+        $this->assertInstanceOf(Foo1::class, $fooSpy);
+
+        $classMockName = MockTestUtil::createMock(Foo1::class);
+        $fooSpy = new $classMockName('BAZ!', 123);
+        $this->assertInstanceOf(Foo1::class, $fooSpy);
     }
 }

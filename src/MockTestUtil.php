@@ -110,7 +110,7 @@ trait MockTestUtil {
      */
     public static function createMock($className) {
         $reflection = new \ReflectionClass($className);
-        $classMockName = '___' . $reflection->getShortName() . 'Mock';
+        $classMockName = '_' . uniqid() . '_' . $reflection->getShortName() . 'Mock';
         $classStr = 'class ' . $classMockName . ' extends \\' . $className . " {\n";
         $classStr .= "    use \\" . MockTestUtil::class . "; \n";
         foreach ($reflection->getMethods() as $reflectionMethod) {
