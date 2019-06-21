@@ -76,6 +76,13 @@ class MockTestUtilTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals('BAR.MODIFIED!', $fooMock->bar());
         $this->assertEquals(2, $fooMock->assertCalls('bar')->callCount());
         $fooMock->assertCalls('baz')->getCall(1)->withoutArgs()->withReturn('MODIFIED!');
+
+        $fooMock->resetAll();
+        $this->assertEquals('BAR.BAZ!', $fooMock->bar());
+        $this->assertEquals('QUX: p1 AND p2', $fooMock->qux('p1', 'p2'));
+        $fooMock->assertCalls('bar')->calledOnce()->withoutArgs()->withReturn('BAR.BAZ!');
+        $fooMock->assertCalls('baz')->calledOnce()->withoutArgs()->withReturn('BAZ!');
+        $fooMock->assertCalls('qux')->calledOnce()->withArgs(['p1', 'p2'])->withReturn('QUX: p1 AND p2');
     }
 
     public function testTestMockReflexao() {
@@ -92,6 +99,12 @@ class MockTestUtilTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals('BAR.MODIFIED!', $fooMock->bar());
         $this->assertEquals(2, $fooMock->assertCalls('bar')->callCount());
         $fooMock->assertCalls('baz')->getCall(1)->withoutArgs()->withReturn('MODIFIED!');
+
+        $this->assertEquals('BAR.MODIFIED!', $fooMock->bar());
+        $this->assertEquals(3, $fooMock->assertCalls('bar')->callCount());
+        
+        $fooMock->resetSpyAll();
+        $this->assertEquals(0, $fooMock->assertCalls('bar')->callCount());
     }
 
     public function testTestMockReflexaoParametroConstrutor() {
@@ -113,6 +126,13 @@ class MockTestUtilTest extends \PHPUnit\Framework\TestCase {
 
         $fooSpy->withoutReturn();
         $fooSpy->assertCalls('withoutReturn')->calledOnce()->withoutReturn();
+
+        $fooSpy->resetAll();
+        $this->assertEquals('QUX: xpto AND 232', $fooSpy->qux("xpto", 232));
+        $this->assertEquals('123BAZ!', $fooSpy->bar());
+        $fooSpy->assertCalls('baz')->calledOnce()->withoutArgs();
+        $fooSpy->assertCalls('qux')->calledOnce()->withArgs(["xpto", 232]);
+        $fooSpy->assertCalls('bar')->calledOnce()->withoutArgs();
     }
 
     public function testTestMockReflexaoDuasCriacoes() {
@@ -124,4 +144,23 @@ class MockTestUtilTest extends \PHPUnit\Framework\TestCase {
         $fooSpy = new $classMockName('BAZ!', 123);
         $this->assertInstanceOf(Foo1::class, $fooSpy);
     }
+
+    public function testTestMockMethod() {
+        $mockName = MockTestUtil::createMock(Foo::class);
+        $fooMock = new $mockName;
+
+        $this->assertEquals('QUX: p1 AND p2', $fooMock->qux('p1', 'p2'));
+        $fooMock->assertCalls('qux')->calledOnce()->withArgs(['p1', 'p2'])->withReturn('QUX: p1 AND p2');
+
+        $fooMock->setMockMethod('qux', function($arg1, $arg2) {
+            return "Alterado $arg1 e $arg2";
+        });
+        $this->assertEquals('Alterado p1 e p2', $fooMock->qux('p1', 'p2'));
+        $fooMock->assertCalls('qux')->getCall(1)->withArgs(['p1', 'p2'])->withReturn('Alterado p1 e p2');
+
+        $fooMock->resetMethod('qux');
+        $this->assertEquals('QUX: p1 AND p2', $fooMock->qux('p1', 'p2'));
+        $fooMock->assertCalls('qux')->calledOnce();
+    }
+
 }

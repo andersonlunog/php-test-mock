@@ -11,6 +11,7 @@ namespace TestMock;
 trait MockTestUtil {
 
     protected $_mockReturns = [];
+    protected $_mockMethods = [];
     protected $_callsSpy = [];
 
     /**
@@ -23,11 +24,13 @@ trait MockTestUtil {
      */
     protected function mockMethod($method, $args) {
         $ret;
-        if (!array_key_exists($method, $this->_mockReturns)) {
+        if (array_key_exists($method, $this->_mockReturns)) {
+            $ret = $this->_mockReturns[$method];
+        } else if (array_key_exists($method, $this->_mockMethods)) {
+            $ret = call_user_func_array($this->_mockMethods[$method], $args);
+        } else {
             $methodOrig = array(get_parent_class($this), $method);
             $ret = call_user_func_array($methodOrig, $args);            
-        } else {
-            $ret = $this->_mockReturns[$method];
         }
         $this->addMockCall($method, $args, $ret);
         return $ret;
@@ -65,6 +68,10 @@ trait MockTestUtil {
         $this->_mockReturns[$method] = $return;
     }
 
+    public function setMockMethod(string $method, $callback) {
+        $this->_mockMethods[$method] = $callback;
+    }
+
     /**
      * Cancela a substituição do retorno de um método da classe, voltando ao seu comportamento original.
      * 
@@ -72,6 +79,7 @@ trait MockTestUtil {
      */
     public function resetMethod(string $method) {
         unset($this->_mockReturns[$method]);
+        unset($this->_mockMethods[$method]);
         unset($this->_callsSpy[$method]);
     }
 
@@ -80,6 +88,7 @@ trait MockTestUtil {
      */
     public function resetAll() {
         $this->_mockReturns = [];
+        $this->_mockMethods = [];
         $this->resetSpyAll();
     }
 
