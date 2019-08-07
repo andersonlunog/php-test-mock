@@ -30,7 +30,7 @@ trait MockTestUtil {
             $ret = call_user_func_array($this->_mockMethods[$method], $args);
         } else {
             $methodOrig = array(get_parent_class($this), $method);
-            $ret = call_user_func_array($methodOrig, $args);            
+            $ret = call_user_func_array($methodOrig, $args);
         }
         $this->addMockCall($method, $args, $ret);
         return $ret;
@@ -61,14 +61,14 @@ trait MockTestUtil {
      * @param type $return
      * @throws Exception
      */
-    public function setMockReturn(string $method, $return) {
+    public function setMockReturn($method, $return) {
         // if (!in_array($method, get_class_methods($this))) {
         //     throw new Exception("Method $method not found.");
         // }
         $this->_mockReturns[$method] = $return;
     }
 
-    public function setMockMethod(string $method, $callback) {
+    public function setMockMethod($method, $callback) {
         $this->_mockMethods[$method] = $callback;
     }
 
@@ -77,7 +77,7 @@ trait MockTestUtil {
      * 
      * @param string $method
      */
-    public function resetMethod(string $method) {
+    public function resetMethod($method) {
         unset($this->_mockReturns[$method]);
         unset($this->_mockMethods[$method]);
         unset($this->_callsSpy[$method]);
@@ -107,7 +107,7 @@ trait MockTestUtil {
      * @param string $method
      * @return \TestMock\MockTestUtilCalls
      */
-    public function assertCalls(string $method) {
+    public function assertCalls($method) {
         if (!isset($this->_callsSpy[$method])) {
             $this->_callsSpy[$method] = [];
         }

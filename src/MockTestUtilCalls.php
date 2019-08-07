@@ -23,7 +23,7 @@ class MockTestUtilCalls extends \PHPUnit\Framework\TestCase {
      * @param int $count
      * @return $this
      */
-    public function withCount(int $count) {
+    public function withCount($count) {
         $this->assertCount($count, $this->_calls, "Method $this->_method calls count.");
         return $this;
     }
@@ -35,7 +35,7 @@ class MockTestUtilCalls extends \PHPUnit\Framework\TestCase {
      * @param int $callIndex
      * @return \TestMock\MockTestUtilCall
      */
-    public function getCall(int $callIndex) {
+    public function getCall($callIndex) {
         return new MockTestUtilCall($this->_method, $callIndex, $this->_calls[$callIndex]);
     }
 

@@ -52,7 +52,7 @@ class MockTestUtilCall extends \PHPUnit\Framework\TestCase {
      * @param int $count
      * @return $this
      */
-    public function withArgsCount(int $count) {
+    public function withArgsCount($count) {
         $this->assertCount($count, $this->getArgs(), "$this->_prefix args count.");
         return $this;
     }
@@ -64,7 +64,7 @@ class MockTestUtilCall extends \PHPUnit\Framework\TestCase {
      * @param type $arg
      * @return $this
      */
-    public function withArg(int $argIndex, $arg) {
+    public function withArg($argIndex, $arg) {
         $this->assertEquals($arg, $this->getArg($argIndex), "$this->_prefix argument `$argIndex`.");
         return $this;
     }
@@ -75,7 +75,7 @@ class MockTestUtilCall extends \PHPUnit\Framework\TestCase {
      * @param int $index
      * @return type
      */
-    public function getArg(int $index) {
+    public function getArg($index) {
         return $this->getArgs()[$index];
     }
     

@@ -162,5 +162,5 @@ class MockTestUtilTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals('QUX: p1 AND p2', $fooMock->qux('p1', 'p2'));
         $fooMock->assertCalls('qux')->calledOnce();
     }
-
+    
 }
